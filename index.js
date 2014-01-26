@@ -47,7 +47,7 @@ function getData () {
 
   $.ajax({
     type: "GET",
-    url: "http://api.outpost.travel/placeRentals/?city=" + city,
+    url: "http://api.outpost.travel/places/?dest=" + city,
   }).done(function(data){
     console.log(data);
     debugger
