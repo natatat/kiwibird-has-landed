@@ -4,39 +4,43 @@ var totalPages,
     i;
 
 function getPageData (page) {
-    $.ajax({
-        type: 'get',
-        url: 'http://api.outpost.travel/places/?page='+ page +'&dest=san%20francisco'
-    }).done(function(data){
-        totalPages = data.totalPages;
-        allListings = data.items;
-        page += 1;
+  $.ajax({
+    type: 'get',
+    url: 'http://api.outpost.travel/places/?page='+ page +'&dest=san%20francisco'
+  }).done(function (data) {
+    totalPages = data.totalPages;
+    allListings = data.items;
 
-        getAirbnbListings(page, totalPages);
-    });
+    if (page === 1) {
+      for (i = 0; i < allListings.length; i++) {
+        if (allListings[i].provider === 'airbnb') {
+          airbnbListings.push(allListings[i]);
+        }
+      }
+    }
+
+    getAirbnbListings(page + 1);
+  });
 }
 
-function getAirbnbListings (page, totalPages) {
-    if (page === 1) {
-        getPageData(page);
-    } else if (page <= totalPages) {
-
-        for (i = 0; i < allListings.length; i++) {
-            if (allListings[i].provider === 'airbnb') {
-                airbnbListings.push(allListings[i]);
-            }
-        }
-
-        if (page != totalPages) {
-            getPageData(page);
-        } else {
-            return airbnbListings;
-        }
+function getAirbnbListings (page) {
+  if (page <= totalPages) {
+    for (i = 0; i < allListings.length; i++) {
+      if (allListings[i].provider === 'airbnb') {
+        airbnbListings.push(allListings[i]);
+      }
     }
+
+    if (page != totalPages) {
+      getPageData(page);
+    } else {
+      return airbnbListings;
+    }
+  }
 }
 
 $(document).ready(function(){
-  getAirbnbListings(1);
+  getPageData(1);
 });
 
 // MVP:
